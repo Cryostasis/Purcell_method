@@ -60,10 +60,10 @@ void main()
 	int n;
 	fin >> n;
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < n; i++)
 	{
 		read_linear_system(m, f);
-		cout << solve_purcell(m, f) << "\n\n";
+		cout << solve_purcell(m, f) << "\n\n\n\n";
 	}
 
 	system("pause");
