@@ -1,43 +1,70 @@
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <cmath>
 #include <vector>
+#include <exception>
 
-//#include "Dense"
-
-#include "vector.h"
-#include "matrix.h"
+#include "Dense"
 
 using namespace std;
+using namespace Eigen;
 
-//using namespace Eigen;
+fstream fin;
+
+VectorXd solve_purcell(MatrixXd mat, VectorXd f)
+{
+	if (mat.rows() != mat.cols() || f.size() != mat.rows())
+		throw std::exception("Wrong matrix/vector size");
+
+	size_t size = mat.rows();
+	MatrixXd V(size + 1, size + 1);
+	MatrixXd A(size, size + 1);
+	A << mat, -f;
+	V.setIdentity();
+	for (size_t k = 0; k < size; k++)
+	{
+		VectorXd Vbuf_k = V.col(k);
+		for (size_t j = k + 1; j < size + 1; j++)
+
+			V.col(j) = V.col(j) - Vbuf_k * 
+				(A.row(k).dot(V.col(j)) /
+				A.row(k).dot(Vbuf_k));
+		cout << V << "\n\n";
+	}
+	return V.col(size).block(0, 0, size, 1);
+}
+
+void read_linear_system(MatrixXd& m, VectorXd& f)
+{
+	int sz;
+	fin >> sz;
+	m.resize(sz, sz);
+	f.resize(sz);
+	for (int i = 0; i < sz; i++)
+		for (int j = 0; j < sz; j++)
+			fin >> m(i, j);
+	for (int i = 0; i < sz; i++)
+		fin >> f(i);
+}
 
 void main()
 {
 	setlocale(LC_ALL, "Russian");
 
-	fstream input, output;
-	input.open("input.txt", fstream::in);
-	output.open("output.txt", fstream::out);
-	
+	fin.open("input.txt");
+
+	MatrixXd m;
+	VectorXd f;
+
 	int n;
-	input >> n;
-	Matrix M(input, n);
-	Vector B(input, n);
+	fin >> n;
 
-	//cout << norm_1(M) << " " << norm_e(M) << " " << norm_inf(M) << endl;
-	
-	//cout << M.norm_inf() << " " << M.invertible_mat().norm_inf() << "\n\n";
-	
-	//cout << M.condition_number_e() << endl;
-	//cout << M.condition_number_inf() << endl;
-	
-	//M.invertible_mat().print();
-
-	cout << "При e = 10^0:\n";
-	cout << "Число обусловленности:\n" << M.condition_number_1() << "\nРешение системы:\n";
-	M.solve_gauss(B).print();
+	for (int i = 0; i < 1; i++)
+	{
+		read_linear_system(m, f);
+		cout << solve_purcell(m, f) << "\n\n";
+	}
 
 	system("pause");
 	return;
