@@ -62,10 +62,15 @@ void main()
 
 	for (int i = 0; i < n; i++)
 	{
+		cout << "Text �" << i << "\n\n";
 		read_linear_system(m, f);
-		cout << solve_purcell(m, f) << "\n\n\n\n";
+		cout << solve_purcell(m, f) << "\n\n\n\n\n";
 	}
 
 	system("pause");
 	return;
 }
+
+
+//Матрица Гильберта
+//Норма ошибки
