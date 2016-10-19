@@ -10,7 +10,11 @@ using namespace std;
 struct Matrix
 {
 	Matrix() {}
-	Matrix(size_t size) { M.resize(size); }
+	Matrix(size_t size) : M(size)
+	{ 
+		for (size_t i = 0; i < size; i++)
+			M[i].resize(size);
+	}
 	Matrix(size_t size, double fill) : Matrix(size) 
 	{
 		for (size_t i = 0; i < size; i++)
@@ -18,11 +22,6 @@ struct Matrix
 	}
 	Matrix(vector<Vector> vec);
 	Matrix(fstream& file, size_t size);
-
-	Matrix(Matrix && mat)
-	{
-
-	}
 
 	void init_frome_file(fstream& file, size_t size);
 

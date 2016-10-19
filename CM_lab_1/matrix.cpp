@@ -48,23 +48,19 @@ Vector Matrix::solve_gauss(Vector B)
 Vector Matrix::solve_Purcell(Vector f)
 {
 	if (M.size() != f.size())
-		throw std::exception("Vector size");
-
+		throw std::exception("Wrong vector size");
 	size_t size = M.size();
 	Matrix V;
-	V.set_identity(size + 1);
-	//vector<Vector> A(size, size + 1);
-
+	V.set_identity(size + 1);							// Нулевой базис - единичная матрица
 	for (size_t k = 0; k < size; k++)
 	{
-		Vector Vbuf_k(V[k]);
-		for (size_t j = k + 1; j < size + 1; j++)
-			V[j] -= Vbuf_k * 
-				dot_purcell_aux(f, V[j], k) /
-				dot_purcell_aux(f, Vbuf_k, k);
-		//cout << V << "\n\n";
+		Vector Vbuf_k(V[k]);							// сохраняем V(k)
+		for (size_t j = k + 1; j < size + 1; j++)		
+			V[j] -= Vbuf_k *							// Шаг метода
+				dot_purcell_aux(f, V[j], k) /           //
+				dot_purcell_aux(f, Vbuf_k, k);			// Коэффициент условия ортогональности
 	}
-	return V[size].block(0, size);
+	return V[size].block(0, size);						//Возвращаем первые N элементов - наше решение
 }
 
 Matrix Matrix::get_inverted()
